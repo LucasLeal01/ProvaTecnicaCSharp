@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk.Web.WindowsDesktop">
+
+  <PropertyGroup>
+    <TargetFramework>net48</TargetFramework>
+    <UseWindowsForms>true</UseWindowsForms>
+    <UseWebForms>true</UseWebForms>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Reference Include="System.Web" />
+    <Reference Include="System.Web.Extensions" />
+    <Reference Include="System.Web.WebPages" />
+  </ItemGroup>
+
+</Project>
+    <Reference Include="System.Web.Extensions" />
+  </ItemGroup>
+
+</Project>
+
