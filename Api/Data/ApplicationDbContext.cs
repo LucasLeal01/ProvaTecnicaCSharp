@@ -17,7 +17,6 @@ namespace Api.Data
         {
             base.OnModelCreating(modelBuilder);
 
-            // Configuração da entidade Funcionario
             modelBuilder.Entity<Funcionario>(entity =>
             {
                 entity.ToTable("Funcionario");
@@ -28,7 +27,6 @@ namespace Api.Data
                 entity.Property(e => e.Salario).IsRequired().HasColumnType("decimal(10,2)");
             });
 
-            // Configuração da entidade Ferias
             modelBuilder.Entity<Ferias>(entity =>
             {
                 entity.ToTable("Ferias");
@@ -43,7 +41,6 @@ namespace Api.Data
                       .OnDelete(DeleteBehavior.Cascade);
             });
 
-            // Configuração da entidade HistoricoAlteracao
             modelBuilder.Entity<HistoricoAlteracao>(entity =>
             {
                 entity.ToTable("HistoricoAlteracao");
@@ -54,7 +51,6 @@ namespace Api.Data
                 entity.Property(e => e.DataHora).IsRequired().HasDefaultValueSql("GETDATE()");
             });
 
-            // Seed data
             modelBuilder.Entity<Funcionario>().HasData(
                 new Funcionario { Id = 1, Nome = "João Silva", Cargo = "Desenvolvedor Júnior", DataAdmissao = new DateTime(2023, 1, 15), Salario = 4500.00m },
                 new Funcionario { Id = 2, Nome = "Maria Santos", Cargo = "Analista de Sistemas", DataAdmissao = new DateTime(2022, 6, 10), Salario = 6200.00m },

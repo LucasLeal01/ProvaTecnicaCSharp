@@ -41,7 +41,6 @@ namespace Api.Controllers
             return ferias;
         }
 
-        // GET: api/ferias/funcionario/5
         [HttpGet("funcionario/{funcionarioId}")]
         public async Task<ActionResult<IEnumerable<Ferias>>> GetFeriasByFuncionario(int funcionarioId)
         {
@@ -53,18 +52,15 @@ namespace Api.Controllers
             return ferias;
         }
 
-        // POST: api/ferias
         [HttpPost]
         public async Task<ActionResult<Ferias>> PostFerias(Ferias ferias)
         {
-            // Validar se o funcionário existe
             var funcionarioExists = await _context.Funcionarios.AnyAsync(f => f.Id == ferias.FuncionarioId);
             if (!funcionarioExists)
             {
                 return BadRequest("Funcionário não encontrado.");
             }
 
-            // Validar datas
             if (ferias.DataFim <= ferias.DataInicio)
             {
                 return BadRequest("A data de fim deve ser posterior à data de início.");

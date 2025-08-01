@@ -1,10 +1,6 @@
--- Script de criação das tabelas para Prova Técnica C# Júnior
--- SQL Server LocalDB
-
 USE master;
 GO
 
--- Criar banco de dados se não existir
 IF NOT EXISTS (SELECT name FROM sys.databases WHERE name = 'ProvaTecnicaDB')
 BEGIN
     CREATE DATABASE ProvaTecnicaDB;
@@ -14,7 +10,6 @@ GO
 USE ProvaTecnicaDB;
 GO
 
--- Tabela Funcionario
 IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='Funcionario' AND xtype='U')
 BEGIN
     CREATE TABLE Funcionario (
@@ -27,7 +22,6 @@ BEGIN
 END
 GO
 
--- Tabela Ferias
 IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='Ferias' AND xtype='U')
 BEGIN
     CREATE TABLE Ferias (
@@ -40,7 +34,6 @@ BEGIN
 END
 GO
 
--- Tabela HistoricoAlteracao
 IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='HistoricoAlteracao' AND xtype='U')
 BEGIN
     CREATE TABLE HistoricoAlteracao (
