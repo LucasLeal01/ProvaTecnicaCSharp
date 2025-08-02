@@ -11,6 +11,7 @@ export class FuncionarioService {
 
   constructor(private http: HttpClient) { }
 
+
   getFuncionarios(): Observable<Funcionario[]> {
     return this.http.get<Funcionario[]>(`${this.apiUrl}/funcionarios`);
   }
@@ -35,6 +36,7 @@ export class FuncionarioService {
     return this.http.get<number>(`${this.apiUrl}/funcionarios/salario-medio`);
   }
 
+
   getFerias(): Observable<Ferias[]> {
     return this.http.get<Ferias[]>(`${this.apiUrl}/ferias`);
   }
@@ -50,6 +52,7 @@ export class FuncionarioService {
   deleteFerias(id: number): Observable<any> {
     return this.http.delete(`${this.apiUrl}/ferias/${id}`);
   }
+
 
   getRelatorioPdf(): Observable<Blob> {
     return this.http.get(`${this.apiUrl}/funcionarios/relatorio/pdf`, { 

@@ -18,15 +18,19 @@ namespace WebFormsUI
 
         protected void Page_Load(object sender, EventArgs e)
         {
-            var isMobile = false;
+            // Determine current view
+            var isMobile = false; // Simplified for now
             CurrentView = isMobile ? "Mobile" : "Desktop";
 
+            // Determine alternate view
             AlternateView = isMobile ? "Desktop" : "Mobile";
 
+            // Create switch URL from the route, e.g. ~/__FriendlyUrls_SwitchView/Mobile?ReturnUrl=/Page
             var switchViewRouteName = "AspNet.FriendlyUrls.SwitchView";
             var switchViewRoute = RouteTable.Routes[switchViewRouteName];
             if (switchViewRoute == null)
             {
+                // Friendly URLs is not enabled or the name of the switch view route is out of sync
                 this.Visible = false;
                 return;
             }
