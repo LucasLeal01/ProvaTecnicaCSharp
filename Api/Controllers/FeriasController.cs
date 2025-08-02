@@ -10,10 +10,12 @@ namespace Api.Controllers
     public class FeriasController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
+        private readonly ILoggingService _loggingService;
 
-        public FeriasController(ApplicationDbContext context)
+        public FeriasController(ApplicationDbContext context, ILoggingService loggingService)
         {
             _context = context;
+            _loggingService = loggingService;
         }
 
         [HttpGet]
@@ -53,21 +55,30 @@ namespace Api.Controllers
         [HttpPost]
         public async Task<ActionResult<Ferias>> PostFerias(Ferias ferias)
         {
-            var funcionarioExists = await _context.Funcionarios.AnyAsync(f => f.Id == ferias.FuncionarioId);
-            if (!funcionarioExists)
+            try
             {
-                return BadRequest("Funcionário não encontrado.");
-            }
+                var funcionarioExists = await _context.Funcionarios.AnyAsync(f => f.Id == ferias.FuncionarioId);
+                if (!funcionarioExists)
+                {
+                    return BadRequest(new { message = "Funcionário não encontrado." });
+                }
 
-            if (ferias.DataFim <= ferias.DataInicio)
+                if (ferias.DataFim <= ferias.DataInicio)
+                {
+                    return BadRequest(new { message = "A data de fim deve ser posterior à data de início." });
+                }
+
+                _context.Ferias.Add(ferias);
+                await _context.SaveChangesAsync();
+
+                _loggingService.LogInformation($"Férias criadas com sucesso: Funcionário ID {ferias.FuncionarioId}, Período: {ferias.DataInicio:dd/MM/yyyy} a {ferias.DataFim:dd/MM/yyyy}");
+                return CreatedAtAction(nameof(GetFerias), new { id = ferias.Id }, ferias);
+            }
+            catch (Exception ex)
             {
-                return BadRequest("A data de fim deve ser posterior à data de início.");
+                _loggingService.LogError($"Erro ao criar férias para funcionário ID: {ferias.FuncionarioId}", ex);
+                return StatusCode(500, new { message = "Erro interno do servidor" });
             }
-
-            _context.Ferias.Add(ferias);
-            await _context.SaveChangesAsync();
-
-            return CreatedAtAction(nameof(GetFerias), new { id = ferias.Id }, ferias);
         }
 
         [HttpPut("{id}")]

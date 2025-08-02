@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FuncionarioService } from '../../services/funcionario.service';
 import { Funcionario } from '../../models/funcionario.model';
+import { NotificationService } from '../../services/notification.service';
 
 @Component({
   selector: 'app-funcionarios-list',
@@ -15,7 +16,10 @@ export class FuncionariosListComponent implements OnInit {
   showForm = false;
   editingFuncionario: Funcionario | null = null;
 
-  constructor(private funcionarioService: FuncionarioService) { }
+  constructor(
+    private funcionarioService: FuncionarioService,
+    private notificationService: NotificationService
+  ) { }
 
   ngOnInit(): void {
     this.loadFuncionarios();
@@ -30,7 +34,6 @@ export class FuncionariosListComponent implements OnInit {
         this.loading = false;
       },
       error: (error) => {
-        this.error = 'Erro ao carregar funcionários: ' + error.message;
         this.loading = false;
       }
     });
@@ -63,9 +66,10 @@ export class FuncionariosListComponent implements OnInit {
         next: () => {
           this.loadFuncionarios();
           this.loadSalarioMedio();
+          this.notificationService.showSuccess('Funcionário excluído com sucesso!');
         },
         error: (error) => {
-          this.error = 'Erro ao excluir funcionário: ' + error.message;
+          // Erro já tratado no serviço
         }
       });
     }
@@ -94,9 +98,10 @@ export class FuncionariosListComponent implements OnInit {
         a.click();
         document.body.removeChild(a);
         window.URL.revokeObjectURL(url);
+        this.notificationService.showSuccess('Relatório baixado com sucesso!');
       },
       error: (error) => {
-        this.error = 'Erro ao baixar relatório: ' + error.message;
+        this.notificationService.showError('Erro ao baixar relatório');
       }
     });
   }

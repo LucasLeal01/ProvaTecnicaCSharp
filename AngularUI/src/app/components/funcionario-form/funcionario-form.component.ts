@@ -1,6 +1,7 @@
 import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { FuncionarioService } from '../../services/funcionario.service';
+import { NotificationService } from '../../services/notification.service';
 import { Funcionario } from '../../models/funcionario.model';
 
 @Component({
@@ -19,7 +20,8 @@ export class FuncionarioFormComponent implements OnInit {
 
   constructor(
     private fb: FormBuilder,
-    private funcionarioService: FuncionarioService
+    private funcionarioService: FuncionarioService,
+    private notificationService: NotificationService
   ) {
     this.funcionarioForm = this.fb.group({
       nome: ['', [Validators.required, Validators.maxLength(100)]],
@@ -62,10 +64,12 @@ export class FuncionarioFormComponent implements OnInit {
         next: () => {
           this.loading = false;
           this.submitted.emit();
+          this.notificationService.showSuccess('Funcionário salvo com sucesso!');
         },
         error: (error) => {
           this.error = 'Erro ao salvar funcionário: ' + error.message;
           this.loading = false;
+          this.notificationService.showError('Erro ao salvar funcionário: ' + error.message);
         }
       });
     }

@@ -16,6 +16,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 builder.Services.AddScoped<IHistoricoService, HistoricoService>();
+builder.Services.AddSingleton<ILoggingService, LoggingService>();
 
 builder.Services.AddCors(options =>
 {

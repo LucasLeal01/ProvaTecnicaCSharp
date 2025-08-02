@@ -15,11 +15,13 @@ namespace Api.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly IHistoricoService _historicoService;
+        private readonly ILoggingService _loggingService;
 
-        public FuncionariosController(ApplicationDbContext context, IHistoricoService historicoService)
+        public FuncionariosController(ApplicationDbContext context, IHistoricoService historicoService, ILoggingService loggingService)
         {
             _context = context;
             _historicoService = historicoService;
+            _loggingService = loggingService;
         }
 
         [HttpGet]
@@ -92,63 +94,87 @@ namespace Api.Controllers
         [HttpPost]
         public async Task<ActionResult<Funcionario>> PostFuncionario(Funcionario funcionario)
         {
-            _context.Funcionarios.Add(funcionario);
-            await _context.SaveChangesAsync();
+            try
+            {
+                _context.Funcionarios.Add(funcionario);
+                await _context.SaveChangesAsync();
 
-            return CreatedAtAction(nameof(GetFuncionario), new { id = funcionario.Id }, funcionario);
+                _loggingService.LogInformation($"Funcionário criado com sucesso: {funcionario.Nome} (ID: {funcionario.Id})");
+                return CreatedAtAction(nameof(GetFuncionario), new { id = funcionario.Id }, funcionario);
+            }
+            catch (Exception ex)
+            {
+                _loggingService.LogError($"Erro ao criar funcionário: {funcionario.Nome}", ex);
+                return StatusCode(500, new { message = "Erro interno do servidor" });
+            }
         }
 
         [HttpPut("{id}")]
         public async Task<IActionResult> PutFuncionario(int id, Funcionario funcionario)
         {
-            if (id != funcionario.Id)
-            {
-                return BadRequest();
-            }
-
-            var funcionarioAntigo = await _context.Funcionarios.AsNoTracking().FirstOrDefaultAsync(f => f.Id == id);
-            
-            if (funcionarioAntigo == null)
-            {
-                return NotFound();
-            }
-
-            _context.Entry(funcionario).State = EntityState.Modified;
-
             try
             {
-                await _context.SaveChangesAsync();
+                if (id != funcionario.Id)
+                {
+                    return BadRequest(new { message = "ID inválido" });
+                }
+
+                var funcionarioAntigo = await _context.Funcionarios.AsNoTracking().FirstOrDefaultAsync(f => f.Id == id);
                 
+                if (funcionarioAntigo == null)
+                {
+                    return NotFound(new { message = "Funcionário não encontrado" });
+                }
+
+                _context.Entry(funcionario).State = EntityState.Modified;
+
+                await _context.SaveChangesAsync();
                 await _historicoService.RegistrarAlteracoes(funcionarioAntigo, funcionario, id);
+
+                _loggingService.LogInformation($"Funcionário atualizado com sucesso: {funcionario.Nome} (ID: {id})");
+                return NoContent();
             }
             catch (DbUpdateConcurrencyException)
             {
                 if (!FuncionarioExists(id))
                 {
-                    return NotFound();
+                    return NotFound(new { message = "Funcionário não encontrado" });
                 }
                 else
                 {
-                    throw;
+                    _loggingService.LogError($"Erro de concorrência ao atualizar funcionário ID: {id}");
+                    return StatusCode(500, new { message = "Erro interno do servidor" });
                 }
             }
-
-            return NoContent();
+            catch (Exception ex)
+            {
+                _loggingService.LogError($"Erro ao atualizar funcionário ID: {id}", ex);
+                return StatusCode(500, new { message = "Erro interno do servidor" });
+            }
         }
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteFuncionario(int id)
         {
-            var funcionario = await _context.Funcionarios.FindAsync(id);
-            if (funcionario == null)
+            try
             {
-                return NotFound();
+                var funcionario = await _context.Funcionarios.FindAsync(id);
+                if (funcionario == null)
+                {
+                    return NotFound(new { message = "Funcionário não encontrado" });
+                }
+
+                _context.Funcionarios.Remove(funcionario);
+                await _context.SaveChangesAsync();
+
+                _loggingService.LogInformation($"Funcionário excluído com sucesso: {funcionario.Nome} (ID: {id})");
+                return NoContent();
             }
-
-            _context.Funcionarios.Remove(funcionario);
-            await _context.SaveChangesAsync();
-
-            return NoContent();
+            catch (Exception ex)
+            {
+                _loggingService.LogError($"Erro ao excluir funcionário ID: {id}", ex);
+                return StatusCode(500, new { message = "Erro interno do servidor" });
+            }
         }
 
         [HttpGet("relatorio/pdf")]
@@ -233,4 +259,5 @@ namespace Api.Controllers
         }
     }
 }
+
 
