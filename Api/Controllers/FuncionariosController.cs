@@ -22,7 +22,6 @@ namespace Api.Controllers
             _historicoService = historicoService;
         }
 
-        // GET: api/funcionarios
         [HttpGet]
         public async Task<ActionResult<IEnumerable<object>>> GetFuncionarios()
         {
@@ -47,7 +46,6 @@ namespace Api.Controllers
             return Ok(funcionarios);
         }
 
-        // GET: api/funcionarios/5
         [HttpGet("{id}")]
         public async Task<ActionResult<object>> GetFuncionario(int id)
         {
@@ -77,7 +75,6 @@ namespace Api.Controllers
             return funcionario;
         }
 
-        // GET: api/funcionarios/salario-medio
         [HttpGet("salario-medio")]
         public async Task<ActionResult<decimal>> GetSalarioMedio()
         {
@@ -92,7 +89,6 @@ namespace Api.Controllers
             return Ok(Math.Round(salarioMedio, 2));
         }
 
-        // POST: api/funcionarios
         [HttpPost]
         public async Task<ActionResult<Funcionario>> PostFuncionario(Funcionario funcionario)
         {
@@ -102,7 +98,6 @@ namespace Api.Controllers
             return CreatedAtAction(nameof(GetFuncionario), new { id = funcionario.Id }, funcionario);
         }
 
-        // PUT: api/funcionarios/5
         [HttpPut("{id}")]
         public async Task<IActionResult> PutFuncionario(int id, Funcionario funcionario)
         {
@@ -111,7 +106,6 @@ namespace Api.Controllers
                 return BadRequest();
             }
 
-            // Buscar funcionário atual para comparação
             var funcionarioAntigo = await _context.Funcionarios.AsNoTracking().FirstOrDefaultAsync(f => f.Id == id);
             
             if (funcionarioAntigo == null)
@@ -125,7 +119,6 @@ namespace Api.Controllers
             {
                 await _context.SaveChangesAsync();
                 
-                // Registrar alterações no histórico
                 await _historicoService.RegistrarAlteracoes(funcionarioAntigo, funcionario, id);
             }
             catch (DbUpdateConcurrencyException)
@@ -143,7 +136,6 @@ namespace Api.Controllers
             return NoContent();
         }
 
-        // DELETE: api/funcionarios/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteFuncionario(int id)
         {
@@ -159,7 +151,6 @@ namespace Api.Controllers
             return NoContent();
         }
 
-        // GET: api/funcionarios/relatorio/pdf
         [HttpGet("relatorio/pdf")]
         public async Task<IActionResult> GetRelatorioPdf()
         {

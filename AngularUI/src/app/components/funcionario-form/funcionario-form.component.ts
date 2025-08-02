@@ -34,7 +34,7 @@ export class FuncionarioFormComponent implements OnInit {
       this.funcionarioForm.patchValue({
         nome: this.funcionario.nome,
         cargo: this.funcionario.cargo,
-        dataAdmissao: this.funcionario.dataAdmissao.split('T')[0], // Format for date input
+        dataAdmissao: this.funcionario.dataAdmissao.split('T')[0],
         salario: this.funcionario.salario
       });
     }

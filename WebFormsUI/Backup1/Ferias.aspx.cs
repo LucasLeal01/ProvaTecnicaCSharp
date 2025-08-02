@@ -82,7 +82,6 @@ namespace WebFormsUI
 
                 await ApiHelper.PostAsync<Models.Ferias>("ferias", ferias);
                 
-                // Limpar campos
                 ddlFuncionario.SelectedIndex = 0;
                 txtDataInicio.Text = string.Empty;
                 txtDataFim.Text = string.Empty;

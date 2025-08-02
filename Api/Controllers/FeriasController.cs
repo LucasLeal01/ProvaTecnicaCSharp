@@ -16,7 +16,6 @@ namespace Api.Controllers
             _context = context;
         }
 
-        // GET: api/ferias
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Ferias>>> GetFerias()
         {
@@ -25,7 +24,6 @@ namespace Api.Controllers
                 .ToListAsync();
         }
 
-        // GET: api/ferias/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Ferias>> GetFerias(int id)
         {
@@ -72,7 +70,6 @@ namespace Api.Controllers
             return CreatedAtAction(nameof(GetFerias), new { id = ferias.Id }, ferias);
         }
 
-        // PUT: api/ferias/5
         [HttpPut("{id}")]
         public async Task<IActionResult> PutFerias(int id, Ferias ferias)
         {
@@ -81,14 +78,12 @@ namespace Api.Controllers
                 return BadRequest();
             }
 
-            // Validar se o funcionário existe
             var funcionarioExists = await _context.Funcionarios.AnyAsync(f => f.Id == ferias.FuncionarioId);
             if (!funcionarioExists)
             {
                 return BadRequest("Funcionário não encontrado.");
             }
 
-            // Validar datas
             if (ferias.DataFim <= ferias.DataInicio)
             {
                 return BadRequest("A data de fim deve ser posterior à data de início.");
@@ -115,7 +110,6 @@ namespace Api.Controllers
             return NoContent();
         }
 
-        // DELETE: api/ferias/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteFerias(int id)
         {

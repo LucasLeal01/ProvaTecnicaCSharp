@@ -21,7 +21,6 @@ namespace Api.Models
         [Range(0, double.MaxValue)]
         public decimal Salario { get; set; }
         
-        // Propriedade de navegação
         public virtual ICollection<Ferias> Ferias { get; set; } = new List<Ferias>();
     }
 }

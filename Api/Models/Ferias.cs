@@ -15,10 +15,8 @@ namespace Api.Models
         [Required]
         public DateTime DataFim { get; set; }
         
-        // Propriedade de navegação
         public virtual Funcionario? Funcionario { get; set; }
         
-        // Propriedade calculada para status das férias
         public string Status
         {
             get

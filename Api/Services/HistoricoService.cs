@@ -25,7 +25,6 @@ namespace Api.Services
 
             foreach (var propriedade in propriedades)
             {
-                // Ignorar propriedades de navegação e Id
                 if (propriedade.Name == "Id" || 
                     propriedade.PropertyType.IsClass && propriedade.PropertyType != typeof(string) ||
                     propriedade.PropertyType.IsGenericType)

@@ -149,7 +149,6 @@ namespace WebFormsUI
 
         protected async void dvFuncionario_ItemUpdating(object sender, DetailsViewUpdateEventArgs e)
         {
-            // Implementação similar ao inserting se necessário
         }
 
         protected async void dvFuncionario_ModeChanging(object sender, DetailsViewModeEventArgs e)
