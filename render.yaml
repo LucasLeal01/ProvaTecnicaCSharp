@@ -1,0 +1,14 @@
+services:
+  - type: web
+    name: angular-ui
+    env: node
+    buildCommand: cd AngularUI && chmod +x build.sh && ./build.sh
+    startCommand: cd AngularUI && npm run start:prod
+    envVars:
+      - key: NODE_VERSION
+        value: 18.x
+  - type: web
+    name: api
+    env: docker
+    dockerfilePath: ./Api/Dockerfile
+    dockerContext: ./Api

@@ -1,0 +1,13 @@
+{
+  "name": "prova-tecnica-csharp",
+  "version": "1.0.0",
+  "description": "Projeto de prova técnica C#",
+  "scripts": {
+    "start": "cd AngularUI && npm run start:prod",
+    "build": "cd AngularUI && npm run build"
+  },
+  "engines": {
+    "node": "18.x"
+  },
+  "private": true
+}
