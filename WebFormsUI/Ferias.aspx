@@ -1,26 +1,26 @@
-<%@ Page Title="F&eacute;rias" Language="C#" MasterPageFile="~/Site.Master" AutoEventWireup="true" CodeBehind="Ferias.aspx.cs" Inherits="WebFormsUI.Ferias" Async="true" %>
+<%@ Page Title="Ferias" Language="C#" MasterPageFile="~/Site.Master" AutoEventWireup="true" CodeBehind="Ferias.aspx.cs" Inherits="WebFormsUI.Ferias" Async="true" %>
 
 <asp:Content ID="BodyContent" ContentPlaceHolderID="MainContent" runat="server">
     <div class="row">
         <div class="col-12">
-            <h2>Gerenciamento de F&eacute;rias</h2>
+            <h2>Gerenciamento de Ferias</h2>
             
             <div class="card mb-4">
                 <div class="card-header">
-                    <h5>Cadastrar F&eacute;rias</h5>
+                    <h5>Cadastrar Ferias</h5>
                 </div>
                 <div class="card-body">
                     <asp:UpdatePanel ID="UpdatePanel1" runat="server">
                         <ContentTemplate>
                             <div class="row">
                                 <div class="col-md-3">
-                                    <label for="ddlFuncionario" class="form-label">Funcion&aacute;rio:</label>
+                                    <label for="ddlFuncionario" class="form-label">Funcionario:</label>
                                     <asp:DropDownList ID="ddlFuncionario" runat="server" CssClass="form-select" 
                                         DataTextField="Nome" DataValueField="Id">
                                     </asp:DropDownList>
                                 </div>
                                 <div class="col-md-3">
-                                    <label for="txtDataInicio" class="form-label">Data In&iacute;cio:</label>
+                                    <label for="txtDataInicio" class="form-label">Data Inicio:</label>
                                     <asp:TextBox ID="txtDataInicio" runat="server" CssClass="form-control" TextMode="Date"></asp:TextBox>
                                 </div>
                                 <div class="col-md-3">
@@ -43,8 +43,8 @@
 
             <div class="card">
                 <div class="card-header d-flex justify-content-between align-items-center">
-                    <h5>Lista de F&eacute;rias</h5>
-                    <asp:Button ID="btnRelatorio" runat="server" Text="Gerar Relat&oacute;rio PDF" CssClass="btn btn-success" OnClick="btnRelatorio_Click" />
+                    <h5>Lista de Ferias</h5>
+                    <asp:Button ID="btnRelatorio" runat="server" Text="Gerar Relatorio PDF" CssClass="btn btn-success" OnClick="btnRelatorio_Click" />
                 </div>
                 <div class="card-body">
                     <asp:UpdatePanel ID="UpdatePanel2" runat="server">
@@ -54,26 +54,26 @@
                                 OnRowDeleting="gvFerias_RowDeleting">
                                 <Columns>
                                     <asp:BoundField DataField="Id" HeaderText="ID" />
-                                    <asp:TemplateField HeaderText="Funcion&aacute;rio">
+                                    <asp:TemplateField HeaderText="Funcionario">
                                         <ItemTemplate>
                                             <%# Eval("Funcionario.Nome") %>
                                         </ItemTemplate>
                                     </asp:TemplateField>
-                                    <asp:BoundField DataField="DataInicio" HeaderText="Data In&iacute;cio" DataFormatString="{0:dd/MM/yyyy}" />
+                                    <asp:BoundField DataField="DataInicio" HeaderText="Data Inicio" DataFormatString="{0:dd/MM/yyyy}" />
                                     <asp:BoundField DataField="DataFim" HeaderText="Data Fim" DataFormatString="{0:dd/MM/yyyy}" />
                                     <asp:BoundField DataField="Status" HeaderText="Status" />
-                                    <asp:TemplateField HeaderText="A&ccedil;&otilde;es">
+                                    <asp:TemplateField HeaderText="Acoes">
                                         <ItemTemplate>
                                             <asp:LinkButton ID="lnkExcluir" runat="server" CommandName="Delete" 
                                                 CssClass="btn btn-sm btn-danger" 
-                                                OnClientClick="return confirm('Deseja realmente excluir esta f&eacute;rias?');">
+                                                OnClientClick="return confirm('Deseja realmente excluir estas ferias?');">
                                                 Excluir
                                             </asp:LinkButton>
                                         </ItemTemplate>
                                     </asp:TemplateField>
                                 </Columns>
                                 <EmptyDataTemplate>
-                                    <div class="alert alert-info">Nenhuma f&eacute;rias encontrada.</div>
+                                    <div class="alert alert-info">Nenhuma ferias encontrada.</div>
                                 </EmptyDataTemplate>
                             </asp:GridView>
                         </ContentTemplate>

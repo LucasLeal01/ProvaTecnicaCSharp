@@ -16,6 +16,7 @@ export class FuncionarioFormComponent implements OnInit {
 
   funcionarioForm: FormGroup;
   loading = false;
+  submitting = false;
   error = '';
 
   constructor(
@@ -45,6 +46,7 @@ export class FuncionarioFormComponent implements OnInit {
   onSubmit(): void {
     if (this.funcionarioForm.valid) {
       this.loading = true;
+      this.submitting = true;
       this.error = '';
 
       const formData = this.funcionarioForm.value;
@@ -63,12 +65,14 @@ export class FuncionarioFormComponent implements OnInit {
       operation.subscribe({
         next: () => {
           this.loading = false;
+          this.submitting = false;
           this.submitted.emit();
           this.notificationService.showSuccess('Funcionário salvo com sucesso!');
         },
         error: (error) => {
           this.error = 'Erro ao salvar funcionário: ' + error.message;
           this.loading = false;
+          this.submitting = false;
           this.notificationService.showError('Erro ao salvar funcionário: ' + error.message);
         }
       });

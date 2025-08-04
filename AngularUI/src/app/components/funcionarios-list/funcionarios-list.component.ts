@@ -10,11 +10,13 @@ import { NotificationService } from '../../services/notification.service';
 })
 export class FuncionariosListComponent implements OnInit {
   funcionarios: Funcionario[] = [];
+  funcionariosFiltrados: Funcionario[] = [];
   salarioMedio: number = 0;
   loading = false;
   error = '';
   showForm = false;
   editingFuncionario: Funcionario | null = null;
+  searchTerm: string = '';
 
   constructor(
     private funcionarioService: FuncionarioService,
@@ -31,6 +33,7 @@ export class FuncionariosListComponent implements OnInit {
     this.funcionarioService.getFuncionarios().subscribe({
       next: (data) => {
         this.funcionarios = data;
+        this.funcionariosFiltrados = [...data];
         this.loading = false;
       },
       error: (error) => {
@@ -48,6 +51,20 @@ export class FuncionariosListComponent implements OnInit {
         console.error('Erro ao carregar salário médio:', error);
       }
     });
+  }
+
+  filterFuncionarios(): void {
+    if (!this.searchTerm.trim()) {
+      this.funcionariosFiltrados = [...this.funcionarios];
+      return;
+    }
+    
+    const term = this.searchTerm.toLowerCase().trim();
+    this.funcionariosFiltrados = this.funcionarios.filter(f => 
+      f.nome.toLowerCase().includes(term) ||
+      f.cargo.toLowerCase().includes(term) ||
+      f.id.toString().includes(term)
+    );
   }
 
   showNewForm(): void {
@@ -69,7 +86,6 @@ export class FuncionariosListComponent implements OnInit {
           this.notificationService.showSuccess('Funcionário excluído com sucesso!');
         },
         error: (error) => {
-          // Erro já tratado no serviço
         }
       });
     }
@@ -98,10 +114,10 @@ export class FuncionariosListComponent implements OnInit {
         a.click();
         document.body.removeChild(a);
         window.URL.revokeObjectURL(url);
-        this.notificationService.showSuccess('Relatório baixado com sucesso!');
+        this.notificationService.showSuccess('Relatório gerado com sucesso!');
       },
       error: (error) => {
-        this.notificationService.showError('Erro ao baixar relatório');
+        this.notificationService.showError('Erro ao gerar relatório');
       }
     });
   }

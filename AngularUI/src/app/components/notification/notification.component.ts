@@ -13,23 +13,26 @@ import { trigger, state, style, transition, animate } from '@angular/animations'
       <div 
         *ngFor="let notification of notifications; trackBy: trackByNotification" 
         class="notification"
-        [ngClass]="notification.type">
-        <div class="notification-header">
-          <span class="notification-icon">
-            <span *ngIf="notification.type === 'success'">✓</span>
-            <span *ngIf="notification.type === 'error'">✕</span>
-            <span *ngIf="notification.type === 'warning'">⚠</span>
-            <span *ngIf="notification.type === 'info'">ℹ</span>
-          </span>
-          <span class="notification-title">
-            <span *ngIf="notification.type === 'success'">Sucesso</span>
-            <span *ngIf="notification.type === 'error'">Erro</span>
-            <span *ngIf="notification.type === 'warning'">Aviso</span>
-            <span *ngIf="notification.type === 'info'">Informação</span>
-          </span>
+        [ngClass]="notification.type"
+        [@slideInOut]="'in'">
+        <div class="notification-content">
+          <div class="notification-icon">
+            <i *ngIf="notification.type === 'success'" class="fas fa-check-circle"></i>
+            <i *ngIf="notification.type === 'error'" class="fas fa-exclamation-circle"></i>
+            <i *ngIf="notification.type === 'warning'" class="fas fa-exclamation-triangle"></i>
+            <i *ngIf="notification.type === 'info'" class="fas fa-info-circle"></i>
+          </div>
+          <div class="notification-message">
+            {{ notification.message }}
+          </div>
+          <button class="notification-close" (click)="removeNotification(notification.id)">
+            <i class="fas fa-times"></i>
+          </button>
         </div>
-        <div class="notification-body">
-          {{ notification.message }}
+        <div class="notification-progress">
+          <div 
+            class="notification-progress-bar" 
+            [style.animation-duration.ms]="notification.duration || 5000"></div>
         </div>
       </div>
     </div>
@@ -40,103 +43,158 @@ import { trigger, state, style, transition, animate } from '@angular/animations'
       top: 20px;
       right: 20px;
       z-index: 9999;
-      max-width: 400px;
-      min-width: 320px;
+      max-width: 350px;
     }
     
     .notification {
       background: white;
-      border-radius: 8px;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.15);
-      margin-bottom: 12px;
-      border: 1px solid #e0e0e0;
+      border-radius: 12px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+      margin-bottom: 15px;
+      border-left: 4px solid;
+      animation: slideIn 0.4s ease-out;
+      font-size: 14px;
+      font-weight: 500;
+      position: relative;
       overflow: hidden;
-      transition: all 0.3s ease;
     }
     
-    .notification:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 8px 30px rgba(0,0,0,0.2);
+    .notification::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: var(--primary-gradient);
     }
     
-    .notification-header {
+    .notification-content {
       display: flex;
       align-items: center;
-      padding: 12px 16px;
-      border-bottom: 1px solid #f0f0f0;
-      font-weight: 600;
-      font-size: 14px;
+      padding: 16px 20px;
     }
     
     .notification-icon {
-      margin-right: 8px;
-      font-size: 16px;
-      font-weight: bold;
+      margin-right: 12px;
+      font-size: 20px;
     }
     
-    .notification-title {
-      text-transform: uppercase;
-      font-size: 12px;
-      letter-spacing: 0.5px;
-    }
-    
-    .notification-body {
-      padding: 16px;
-      font-size: 14px;
+    .notification-message {
+      flex: 1;
       line-height: 1.5;
-      color: #333;
+    }
+    
+    .notification-close {
+      background: transparent;
+      border: none;
+      color: #718096;
+      cursor: pointer;
+      font-size: 16px;
+      padding: 0;
+      margin-left: 10px;
+      opacity: 0.7;
+      transition: all 0.2s ease;
+    }
+    
+    .notification-close:hover {
+      opacity: 1;
+    }
+    
+    .notification-progress {
+      height: 3px;
+      width: 100%;
+      background: rgba(0,0,0,0.05);
+    }
+    
+    .notification-progress-bar {
+      height: 100%;
+      width: 100%;
+      transform-origin: left;
+      animation: progress linear forwards;
+    }
+    
+    @keyframes progress {
+      from { transform: scaleX(1); }
+      to { transform: scaleX(0); }
     }
     
     .notification.success {
-      border-left: 4px solid #10b981;
-    }
-    
-    .notification.success .notification-header {
-      background: #f0fdf4;
-      color: #065f46;
+      border-left-color: #28a745;
+      color: #155724;
     }
     
     .notification.success .notification-icon {
-      color: #10b981;
+      color: #28a745;
+    }
+    
+    .notification.success .notification-progress-bar {
+      background: linear-gradient(to right, #28a745, #4facfe);
     }
     
     .notification.error {
-      border-left: 4px solid #ef4444;
-    }
-    
-    .notification.error .notification-header {
-      background: #fef2f2;
-      color: #991b1b;
+      border-left-color: #dc3545;
+      color: #721c24;
     }
     
     .notification.error .notification-icon {
-      color: #ef4444;
+      color: #dc3545;
+    }
+    
+    .notification.error .notification-progress-bar {
+      background: linear-gradient(to right, #dc3545, #ff6b6b);
     }
     
     .notification.warning {
-      border-left: 4px solid #f59e0b;
-    }
-    
-    .notification.warning .notification-header {
-      background: #fffbeb;
-      color: #92400e;
+      border-left-color: #ffc107;
+      color: #856404;
     }
     
     .notification.warning .notification-icon {
-      color: #f59e0b;
+      color: #ffc107;
+    }
+    
+    .notification.warning .notification-progress-bar {
+      background: linear-gradient(to right, #ffc107, #f5576c);
     }
     
     .notification.info {
-      border-left: 4px solid #3b82f6;
-    }
-    
-    .notification.info .notification-header {
-      background: #eff6ff;
-      color: #1e40af;
+      border-left-color: #17a2b8;
+      color: #0c5460;
     }
     
     .notification.info .notification-icon {
-      color: #3b82f6;
+      color: #17a2b8;
+    }
+    
+    .notification.info .notification-progress-bar {
+      background: linear-gradient(to right, #17a2b8, #4facfe);
+    }
+    
+    @keyframes slideIn {
+      from {
+        transform: translateX(100%);
+        opacity: 0;
+      }
+      to {
+        transform: translateX(0);
+        opacity: 1;
+      }
+    }
+    
+    .notification.fade-out {
+      animation: fadeOut 0.3s ease-in forwards;
+    }
+    
+    @keyframes fadeOut {
+      from {
+        transform: translateX(0);
+        opacity: 1;
+      }
+      to {
+        transform: translateX(100%);
+        opacity: 0;
+      }
     }
   `],
   animations: [
@@ -189,11 +247,7 @@ export class NotificationComponent implements OnInit, OnDestroy {
     }
   }
 
-  onAnimationDone(event: any, notification: Notification) {
-    // Lógica adicional se necessário
-  }
-
   trackByNotification(index: number, notification: Notification): number {
     return notification.id;
   }
-} 
+}

@@ -1,0 +1,108 @@
+<div class="container">
+  <div class="card">
+    <div class="card-header">
+      <div>Gerenciamento de Férias</div>
+      <div class="search-container">
+        <i class="fas fa-search"></i>
+        <input type="text" placeholder="Buscar férias...">
+      </div>
+    </div>
+    
+    <div class="card-body">
+      <div class="btn-toolbar">
+        <button class="btn btn-primary" (click)="toggleForm()">
+          <i class="fas fa-plus"></i> Registrar Férias
+        </button>
+        <button class="btn btn-success" (click)="gerarRelatorio()">
+          <i class="fas fa-file-pdf"></i> Gerar Relatório
+        </button>
+      </div>
+      
+      <div *ngIf="error" class="alert alert-danger">
+        <i class="fas fa-exclamation-circle"></i>
+        {{ error }}
+      </div>
+      
+      <div *ngIf="showForm" class="card mb-4">
+        <div class="card-header">Registro de Férias</div>
+        <div class="card-body">
+          <form [formGroup]="feriasForm" (ngSubmit)="onSubmit()">
+            <div class="form-group">
+              <label for="funcionarioNome">Funcionário</label>
+              <input type="text" id="funcionarioNome" class="form-control" formControlName="funcionarioNome">
+              <div *ngIf="feriasForm.get('funcionarioNome')?.invalid && feriasForm.get('funcionarioNome')?.touched" class="invalid-feedback">
+                Nome do funcionário é obrigatório
+              </div>
+            </div>
+            
+            <div class="form-group">
+              <label for="dataInicio">Data de Início</label>
+              <input type="date" id="dataInicio" class="form-control" formControlName="dataInicio">
+              <div *ngIf="feriasForm.get('dataInicio')?.invalid && feriasForm.get('dataInicio')?.touched" class="invalid-feedback">
+                Data de início é obrigatória
+              </div>
+            </div>
+            
+            <div class="form-group">
+              <label for="dataFim">Data de Término</label>
+              <input type="date" id="dataFim" class="form-control" formControlName="dataFim">
+              <div *ngIf="feriasForm.get('dataFim')?.invalid && feriasForm.get('dataFim')?.touched" class="invalid-feedback">
+                Data de término é obrigatória
+              </div>
+            </div>
+            
+            <div class="card-footer">
+              <button type="button" class="btn btn-secondary" (click)="toggleForm()">
+                <i class="fas fa-times"></i> Cancelar
+              </button>
+              <button type="submit" class="btn btn-primary" [disabled]="feriasForm.invalid || loading">
+                <span *ngIf="loading" class="spinner-border spinner-border-sm"></span>
+                <i *ngIf="!loading" class="fas fa-save"></i> Salvar
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+      
+      <div *ngIf="loading && !showForm" class="spinner-container">
+        <div class="spinner-border"></div>
+      </div>
+      
+      <div *ngIf="!loading && ferias.length === 0" class="alert alert-info">
+        <i class="fas fa-info-circle"></i>
+        Nenhum registro de férias encontrado.
+      </div>
+      
+      <div *ngIf="!loading && ferias.length > 0" class="table-responsive">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Funcionário</th>
+              <th>Data de Início</th>
+              <th>Data de Término</th>
+              <th>Ações</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let item of ferias">
+              <td>{{ item.id }}</td>
+              <td>{{ item.funcionarioNome }}</td>
+              <td>{{ item.dataInicio | date:'dd/MM/yyyy' }}</td>
+              <td>{{ item.dataFim | date:'dd/MM/yyyy' }}</td>
+              <td class="table-actions">
+                <button class="btn btn-danger btn-sm" (click)="excluirFerias(item.id)">
+                  <i class="fas fa-trash"></i>
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    
+    <div class="card-footer">
+      <div>Total de registros: {{ ferias.length }}</div>
+    </div>
+  </div>
+</div>
