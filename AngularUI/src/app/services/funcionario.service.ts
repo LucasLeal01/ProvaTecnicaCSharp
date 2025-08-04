@@ -3,12 +3,13 @@ import { HttpClient } from '@angular/common/http';
 import { Observable, catchError, throwError } from 'rxjs';
 import { Funcionario, Ferias } from '../models/funcionario.model';
 import { NotificationService } from './notification.service';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class FuncionarioService {
-  private apiUrl = 'http://localhost:5000/api';
+  private apiUrl = environment.apiUrl;
 
   constructor(
     private http: HttpClient,
@@ -30,9 +31,23 @@ export class FuncionarioService {
   }
 
   createFuncionario(funcionario: Funcionario): Observable<Funcionario> {
+    console.log('Enviando funcionário para API:', funcionario);
+    console.log('URL da API:', `${this.apiUrl}/funcionarios`);
+    
     return this.http.post<Funcionario>(`${this.apiUrl}/funcionarios`, funcionario).pipe(
       catchError(error => {
-        this.notificationService.showError('Erro ao criar funcionário');
+        console.error('Erro ao criar funcionário:', error);
+        let errorMessage = 'Erro ao criar funcionário';
+        
+        if (error.error && error.error.message) {
+          errorMessage += `: ${error.error.message}`;
+        } else if (error.message) {
+          errorMessage += `: ${error.message}`;
+        } else if (error.status) {
+          errorMessage += `: Erro ${error.status}`;
+        }
+        
+        this.notificationService.showError(errorMessage);
         return throwError(() => error);
       })
     );

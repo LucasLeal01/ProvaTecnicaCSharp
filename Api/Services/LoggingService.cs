@@ -7,6 +7,7 @@ namespace Api.Services
     public interface ILoggingService
     {
         void LogInformation(string message);
+        void LogInfo(string message);
         void LogWarning(string message);
         void LogError(string message, Exception? exception = null);
     }
@@ -28,6 +29,11 @@ namespace Api.Services
         }
 
         public void LogInformation(string message)
+        {
+            WriteLog("INFO", message);
+        }
+
+        public void LogInfo(string message)
         {
             WriteLog("INFO", message);
         }
@@ -56,4 +62,4 @@ namespace Api.Services
             }
         }
     }
-} 
+}

@@ -27,25 +27,40 @@ namespace Api.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<object>>> GetFuncionarios()
         {
-            var funcionarios = await _context.Funcionarios
-                .Include(f => f.Ferias)
-                .Select(f => new
-                {
-                    f.Id,
-                    f.Nome,
-                    f.Cargo,
-                    f.DataAdmissao,
-                    f.Salario,
-                    Ferias = f.Ferias.Select(fe => new
+            try
+            {
+                _loggingService.LogInfo("Iniciando busca de funcionários");
+                
+                // Verifica se há funcionários no banco
+                var count = await _context.Funcionarios.CountAsync();
+                _loggingService.LogInfo($"Número de funcionários encontrados: {count}");
+                
+                var funcionarios = await _context.Funcionarios
+                    .Include(f => f.Ferias)
+                    .Select(f => new
                     {
-                        fe.Id,
-                        fe.DataInicio,
-                        fe.DataFim
+                        f.Id,
+                        f.Nome,
+                        f.Cargo,
+                        f.DataAdmissao,
+                        f.Salario,
+                        Ferias = f.Ferias.Select(fe => new
+                        {
+                            fe.Id,
+                            fe.DataInicio,
+                            fe.DataFim
+                        })
                     })
-                })
-                .ToListAsync();
+                    .ToListAsync();
 
-            return Ok(funcionarios);
+                _loggingService.LogInfo($"Retornando {funcionarios.Count} funcionários");
+                return Ok(funcionarios);
+            }
+            catch (Exception ex)
+            {
+                _loggingService.LogError($"Erro ao buscar funcionários: {ex.Message}");
+                return StatusCode(500, new { error = "Erro ao buscar funcionários", details = ex.Message });
+            }
         }
 
         [HttpGet("{id}")]

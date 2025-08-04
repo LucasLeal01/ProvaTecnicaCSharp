@@ -1,5 +1,6 @@
 const express = require('express');
 const path = require('path');
+const { createProxyMiddleware } = require('http-proxy-middleware');
 const app = express();
 
 // Verifica se o diretório dist/angular-ui existe
@@ -18,6 +19,32 @@ if (!fs.existsSync(distPath)) {
     console.log(fs.readdirSync(parentDistPath));
   }
 }
+
+// Configuração do proxy para a API
+const apiUrl = process.env.API_URL || 'http://localhost:5000';
+console.log(`Configurando proxy para API: ${apiUrl}`);
+
+// Adiciona o proxy para a API
+app.use('/api', createProxyMiddleware({
+  target: apiUrl,
+  changeOrigin: true,
+  secure: false,
+  logLevel: 'debug',
+  pathRewrite: { '^/api': '/api' },
+  onProxyReq: (proxyReq, req, res) => {
+    console.log(`Proxy request: ${req.method} ${req.url} -> ${apiUrl}${req.url}`);
+    // Adiciona cabeçalhos para debug
+    proxyReq.setHeader('X-Forwarded-Host', req.headers.host);
+    proxyReq.setHeader('X-Forwarded-Proto', 'https');
+  },
+  onProxyRes: (proxyRes, req, res) => {
+    console.log(`Proxy response: ${proxyRes.statusCode} for ${req.method} ${req.url}`);
+  },
+  onError: (err, req, res) => {
+    console.error('Erro no proxy:', err);
+    res.status(500).json({ error: 'Erro ao conectar com a API', details: err.message });
+  }
+}));
 
 // Serve os arquivos estáticos da pasta dist
 app.use(express.static(distPath));

@@ -4,9 +4,10 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
+    "start:dev": "ng serve --proxy-config proxy.conf.json",
     "start:prod": "node server.js",
     "build": "ng build",
-    "postinstall": "npm install express && ng build",
+    "postinstall": "npm install express http-proxy-middleware && ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test"
   },
@@ -24,6 +25,7 @@
     "@angular/platform-browser-dynamic": "^16.0.0",
     "@angular/router": "^16.0.0",
     "express": "^4.18.2",
+    "http-proxy-middleware": "^2.0.6",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0",
     "zone.js": "~0.13.0"
