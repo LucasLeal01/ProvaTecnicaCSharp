@@ -10,11 +10,14 @@ namespace WebFormsUI
 {
     public partial class Funcionarios : Page
     {
-        protected async void Page_Load(object sender, EventArgs e)
+        protected void Page_Load(object sender, EventArgs e)
         {
             if (!IsPostBack)
             {
-                await CarregarFuncionarios();
+                RegisterAsyncTask(new PageAsyncTask(async () =>
+                {
+                    await CarregarFuncionarios();
+                }));
             }
         }
 
@@ -28,7 +31,8 @@ namespace WebFormsUI
             }
             catch (Exception ex)
             {
-                MostrarMensagem($"Erro ao carregar funcionários: {ex.Message}", "alert-danger");
+                LoggingHelper.LogError("Erro ao carregar funcionários", ex);
+                NotificationHelper.ShowError(this, "Erro ao carregar funcionários. Tente novamente.");
             }
         }
 
@@ -56,7 +60,8 @@ namespace WebFormsUI
             }
             catch (Exception ex)
             {
-                MostrarMensagem($"Erro ao gerar relatório: {ex.Message}", "alert-danger");
+                LoggingHelper.LogError("Erro ao gerar relatório PDF", ex);
+                NotificationHelper.ShowError(this, "Erro ao gerar relatório. Tente novamente.");
             }
         }
 
@@ -77,10 +82,11 @@ namespace WebFormsUI
 
         protected async void gvFuncionarios_RowUpdating(object sender, GridViewUpdateEventArgs e)
         {
+            var id = Convert.ToInt32(gvFuncionarios.DataKeys[e.RowIndex].Value);
+            
             try
             {
                 var row = gvFuncionarios.Rows[e.RowIndex];
-                var id = Convert.ToInt32(gvFuncionarios.DataKeys[e.RowIndex].Value);
 
                 var funcionario = new Funcionario
                 {
@@ -91,30 +97,35 @@ namespace WebFormsUI
                     Salario = Convert.ToDecimal(((TextBox)row.Cells[4].Controls[0]).Text),
                 };
 
-                await ApiHelper.PutAsync($"funcionarios/{id}", funcionario);
+                await ApiHelper.PutAsync(string.Format("funcionarios/{0}", id), funcionario);
 
                 gvFuncionarios.EditIndex = -1;
                 await CarregarFuncionarios();
-                MostrarMensagem("Funcionário atualizado com sucesso!", "alert-success");
+                LoggingHelper.LogInformation($"Funcionário atualizado com sucesso: {funcionario.Nome} (ID: {id})");
+                NotificationHelper.ShowSuccess(this, "Funcionário atualizado com sucesso!");
             }
             catch (Exception ex)
             {
-                MostrarMensagem($"Erro ao atualizar funcionário: {ex.Message}", "alert-danger");
+                LoggingHelper.LogError($"Erro ao atualizar funcionário ID: {id}", ex);
+                NotificationHelper.ShowError(this, "Erro ao atualizar funcionário. Tente novamente.");
             }
         }
 
         protected async void gvFuncionarios_RowDeleting(object sender, GridViewDeleteEventArgs e)
         {
+            var id = Convert.ToInt32(gvFuncionarios.DataKeys[e.RowIndex].Value);
+            
             try
             {
-                var id = Convert.ToInt32(gvFuncionarios.DataKeys[e.RowIndex].Value);
-                await ApiHelper.DeleteAsync($"funcionarios/{id}");
+                await ApiHelper.DeleteAsync(string.Format("funcionarios/{0}", id));
                 await CarregarFuncionarios();
-                MostrarMensagem("Funcionário excluído com sucesso!", "alert-success");
+                LoggingHelper.LogInformation($"Funcionário excluído com sucesso: ID {id}");
+                NotificationHelper.ShowSuccess(this, "Funcionário excluído com sucesso!");
             }
             catch (Exception ex)
             {
-                MostrarMensagem($"Erro ao excluir funcionário: {ex.Message}", "alert-danger");
+                LoggingHelper.LogError($"Erro ao excluir funcionário ID: {id}", ex);
+                NotificationHelper.ShowError(this, "Erro ao excluir funcionário. Tente novamente.");
             }
         }
 
@@ -138,16 +149,18 @@ namespace WebFormsUI
                 dvFuncionario.Visible = false;
                 gvFuncionarios.Visible = true;
                 await CarregarFuncionarios();
-                MostrarMensagem("Funcionário criado com sucesso!", "alert-success");
+                LoggingHelper.LogInformation($"Funcionário criado com sucesso: {funcionario.Nome}");
+                NotificationHelper.ShowSuccess(this, "Funcionário criado com sucesso!");
             }
             catch (Exception ex)
             {
-                MostrarMensagem($"Erro ao criar funcionário: {ex.Message}", "alert-danger");
+                LoggingHelper.LogError("Erro ao criar funcionário", ex);
+                NotificationHelper.ShowError(this, "Erro ao criar funcionário. Tente novamente.");
                 e.Cancel = true;
             }
         }
 
-        protected async void dvFuncionario_ItemUpdating(object sender, DetailsViewUpdateEventArgs e)
+        protected void dvFuncionario_ItemUpdating(object sender, DetailsViewUpdateEventArgs e)
         {
         }
 
@@ -161,11 +174,6 @@ namespace WebFormsUI
             }
         }
 
-        private void MostrarMensagem(string mensagem, string cssClass)
-        {
-            lblMensagem.Text = mensagem;
-            lblMensagem.CssClass = $"alert {cssClass}";
-            lblMensagem.Visible = true;
-        }
+
     }
 }

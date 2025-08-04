@@ -10,28 +10,59 @@ namespace WebFormsUI.Helpers
 {
     public static class ApiHelper
     {
-        private static readonly HttpClient httpClient = new HttpClient();
         private static readonly string baseUrl = ConfigurationManager.AppSettings["ApiBaseUrl"] ?? "http://localhost:5000/api";
         private static readonly JavaScriptSerializer jsonSerializer = new JavaScriptSerializer();
 
-        static ApiHelper()
+        private static HttpClient CreateHttpClient()
         {
-            httpClient.BaseAddress = new Uri(baseUrl);
-            httpClient.DefaultRequestHeaders.Add("Accept", "application/json");
+            var client = new HttpClient();
+            client.DefaultRequestHeaders.Add("Accept", "application/json");
+            return client;
+        }
+
+        private static string SerializeToCamelCase(object obj)
+        {
+            var serializer = new JavaScriptSerializer();
+            var dict = new Dictionary<string, object>();
+            
+            var properties = obj.GetType().GetProperties();
+            foreach (var prop in properties)
+            {
+                var value = prop.GetValue(obj);
+                if (value != null)
+                {
+                    var camelCaseName = char.ToLowerInvariant(prop.Name[0]) + prop.Name.Substring(1);
+                    
+                    if (value is DateTime dateTime)
+                    {
+                        dict[camelCaseName] = dateTime.ToString("yyyy-MM-dd");
+                    }
+                    else
+                    {
+                        dict[camelCaseName] = value;
+                    }
+                }
+            }
+            
+            return serializer.Serialize(dict);
         }
 
         public static async Task<T> GetAsync<T>(string endpoint)
         {
             try
             {
-                var response = await httpClient.GetAsync(endpoint);
-                response.EnsureSuccessStatusCode();
-                var json = await response.Content.ReadAsStringAsync();
-                return jsonSerializer.Deserialize<T>(json);
+                using (var httpClient = CreateHttpClient())
+                {
+                    var url = $"{baseUrl}/{endpoint}";
+                    var response = await httpClient.GetAsync(url);
+                    response.EnsureSuccessStatusCode();
+                    var json = await response.Content.ReadAsStringAsync();
+                    return jsonSerializer.Deserialize<T>(json);
+                }
             }
             catch (Exception ex)
             {
-                throw new Exception($"Erro ao fazer GET para {endpoint}: {ex.Message}");
+                throw new Exception(string.Format("Erro ao fazer GET para {0}: {1}", endpoint, ex.Message));
             }
         }
 
@@ -39,16 +70,27 @@ namespace WebFormsUI.Helpers
         {
             try
             {
-                var json = jsonSerializer.Serialize(data);
-                var content = new StringContent(json, Encoding.UTF8, "application/json");
-                var response = await httpClient.PostAsync(endpoint, content);
-                response.EnsureSuccessStatusCode();
-                var responseJson = await response.Content.ReadAsStringAsync();
-                return jsonSerializer.Deserialize<T>(responseJson);
+                using (var httpClient = CreateHttpClient())
+                {
+                    var json = SerializeToCamelCase(data);
+                    var content = new StringContent(json, Encoding.UTF8, "application/json");
+                    var url = $"{baseUrl}/{endpoint}";
+                    
+                    var response = await httpClient.PostAsync(url, content);
+                    
+                    if (!response.IsSuccessStatusCode)
+                    {
+                        var errorContent = await response.Content.ReadAsStringAsync();
+                        throw new Exception($"HTTP {response.StatusCode}: {errorContent}");
+                    }
+                    
+                    var responseJson = await response.Content.ReadAsStringAsync();
+                    return jsonSerializer.Deserialize<T>(responseJson);
+                }
             }
             catch (Exception ex)
             {
-                throw new Exception($"Erro ao fazer POST para {endpoint}: {ex.Message}");
+                throw new Exception(string.Format("Erro ao fazer POST para {0}: {1}", endpoint, ex.Message));
             }
         }
 
@@ -56,14 +98,18 @@ namespace WebFormsUI.Helpers
         {
             try
             {
-                var json = jsonSerializer.Serialize(data);
-                var content = new StringContent(json, Encoding.UTF8, "application/json");
-                var response = await httpClient.PutAsync(endpoint, content);
-                response.EnsureSuccessStatusCode();
+                using (var httpClient = CreateHttpClient())
+                {
+                    var json = SerializeToCamelCase(data);
+                    var content = new StringContent(json, Encoding.UTF8, "application/json");
+                    var url = $"{baseUrl}/{endpoint}";
+                    var response = await httpClient.PutAsync(url, content);
+                    response.EnsureSuccessStatusCode();
+                }
             }
             catch (Exception ex)
             {
-                throw new Exception($"Erro ao fazer PUT para {endpoint}: {ex.Message}");
+                throw new Exception(string.Format("Erro ao fazer PUT para {0}: {1}", endpoint, ex.Message));
             }
         }
 
@@ -71,12 +117,16 @@ namespace WebFormsUI.Helpers
         {
             try
             {
-                var response = await httpClient.DeleteAsync(endpoint);
-                response.EnsureSuccessStatusCode();
+                using (var httpClient = CreateHttpClient())
+                {
+                    var url = $"{baseUrl}/{endpoint}";
+                    var response = await httpClient.DeleteAsync(url);
+                    response.EnsureSuccessStatusCode();
+                }
             }
             catch (Exception ex)
             {
-                throw new Exception($"Erro ao fazer DELETE para {endpoint}: {ex.Message}");
+                throw new Exception(string.Format("Erro ao fazer DELETE para {0}: {1}", endpoint, ex.Message));
             }
         }
 
@@ -84,13 +134,17 @@ namespace WebFormsUI.Helpers
         {
             try
             {
-                var response = await httpClient.GetAsync(endpoint);
-                response.EnsureSuccessStatusCode();
-                return await response.Content.ReadAsByteArrayAsync();
+                using (var httpClient = CreateHttpClient())
+                {
+                    var url = $"{baseUrl}/{endpoint}";
+                    var response = await httpClient.GetAsync(url);
+                    response.EnsureSuccessStatusCode();
+                    return await response.Content.ReadAsByteArrayAsync();
+                }
             }
             catch (Exception ex)
             {
-                throw new Exception($"Erro ao baixar PDF de {endpoint}: {ex.Message}");
+                throw new Exception(string.Format("Erro ao baixar PDF de {0}: {1}", endpoint, ex.Message));
             }
         }
     }

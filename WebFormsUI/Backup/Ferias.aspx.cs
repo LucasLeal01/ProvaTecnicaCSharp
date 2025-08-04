@@ -10,12 +10,15 @@ namespace WebFormsUI
 {
     public partial class Ferias : Page
     {
-        protected async void Page_Load(object sender, EventArgs e)
+        protected void Page_Load(object sender, EventArgs e)
         {
             if (!IsPostBack)
             {
-                await CarregarFuncionarios();
-                await CarregarFerias();
+                RegisterAsyncTask(new PageAsyncTask(async () =>
+                {
+                    await CarregarFuncionarios();
+                    await CarregarFerias();
+                }));
             }
         }
 
@@ -30,7 +33,8 @@ namespace WebFormsUI
             }
             catch (Exception ex)
             {
-                MostrarMensagem($"Erro ao carregar funcionários: {ex.Message}", "alert-danger");
+                LoggingHelper.LogError("Erro ao carregar funcionários na página de férias", ex);
+                NotificationHelper.ShowError(this, "Erro ao carregar funcionários. Tente novamente.");
             }
         }
 
@@ -44,7 +48,8 @@ namespace WebFormsUI
             }
             catch (Exception ex)
             {
-                MostrarMensagem($"Erro ao carregar férias: {ex.Message}", "alert-danger");
+                LoggingHelper.LogError("Erro ao carregar férias", ex);
+                NotificationHelper.ShowError(this, "Erro ao carregar férias. Tente novamente.");
             }
         }
 
@@ -54,13 +59,13 @@ namespace WebFormsUI
             {
                 if (ddlFuncionario.SelectedValue == "0")
                 {
-                    MostrarMensagem("Selecione um funcionário.", "alert-warning");
+                    NotificationHelper.ShowWarning(this, "Selecione um funcionário.");
                     return;
                 }
 
                 if (string.IsNullOrEmpty(txtDataInicio.Text) || string.IsNullOrEmpty(txtDataFim.Text))
                 {
-                    MostrarMensagem("Preencha as datas de início e fim.", "alert-warning");
+                    NotificationHelper.ShowWarning(this, "Preencha as datas de início e fim.");
                     return;
                 }
 
@@ -69,7 +74,7 @@ namespace WebFormsUI
 
                 if (dataFim <= dataInicio)
                 {
-                    MostrarMensagem("A data de fim deve ser posterior à data de início.", "alert-warning");
+                    NotificationHelper.ShowWarning(this, "A data de fim deve ser posterior à data de início.");
                     return;
                 }
 
@@ -87,26 +92,31 @@ namespace WebFormsUI
                 txtDataFim.Text = string.Empty;
                 
                 await CarregarFerias();
-                MostrarMensagem("Férias cadastradas com sucesso!", "alert-success");
+                LoggingHelper.LogInformation($"Férias cadastradas com sucesso: Funcionário ID {ferias.FuncionarioId}, Período: {dataInicio:dd/MM/yyyy} a {dataFim:dd/MM/yyyy}");
+                NotificationHelper.ShowSuccess(this, "Férias cadastradas com sucesso!");
             }
             catch (Exception ex)
             {
-                MostrarMensagem($"Erro ao salvar férias: {ex.Message}", "alert-danger");
+                LoggingHelper.LogError("Erro ao salvar férias", ex);
+                NotificationHelper.ShowError(this, "Erro ao salvar férias. Tente novamente.");
             }
         }
 
         protected async void gvFerias_RowDeleting(object sender, GridViewDeleteEventArgs e)
         {
+            var id = Convert.ToInt32(gvFerias.DataKeys[e.RowIndex].Value);
+            
             try
             {
-                var id = Convert.ToInt32(gvFerias.DataKeys[e.RowIndex].Value);
-                await ApiHelper.DeleteAsync($"ferias/{id}");
+                await ApiHelper.DeleteAsync(string.Format("ferias/{0}", id));
                 await CarregarFerias();
-                MostrarMensagem("Férias excluídas com sucesso!", "alert-success");
+                LoggingHelper.LogInformation($"Férias excluídas com sucesso: ID {id}");
+                NotificationHelper.ShowSuccess(this, "Férias excluídas com sucesso!");
             }
             catch (Exception ex)
             {
-                MostrarMensagem($"Erro ao excluir férias: {ex.Message}", "alert-danger");
+                LoggingHelper.LogError($"Erro ao excluir férias ID: {id}", ex);
+                NotificationHelper.ShowError(this, "Erro ao excluir férias. Tente novamente.");
             }
         }
 
@@ -124,16 +134,12 @@ namespace WebFormsUI
             }
             catch (Exception ex)
             {
-                MostrarMensagem($"Erro ao gerar relatório: {ex.Message}", "alert-danger");
+                LoggingHelper.LogError("Erro ao gerar relatório PDF de férias", ex);
+                NotificationHelper.ShowError(this, "Erro ao gerar relatório. Tente novamente.");
             }
         }
 
-        private void MostrarMensagem(string mensagem, string cssClass)
-        {
-            lblMensagem.Text = mensagem;
-            lblMensagem.CssClass = $"alert {cssClass}";
-            lblMensagem.Visible = true;
-        }
+
     }
 }
 

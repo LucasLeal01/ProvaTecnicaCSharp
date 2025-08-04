@@ -5,7 +5,6 @@ using System.Web;
 using System.Web.Routing;
 using System.Web.UI;
 using System.Web.UI.WebControls;
-using Microsoft.AspNet.FriendlyUrls.Resolvers;
 
 namespace WebFormsUI
 {
@@ -19,7 +18,7 @@ namespace WebFormsUI
 
         protected void Page_Load(object sender, EventArgs e)
         {
-            var isMobile = WebFormsFriendlyUrlResolver.IsMobileView(new HttpContextWrapper(Context));
+            var isMobile = false;
             CurrentView = isMobile ? "Mobile" : "Desktop";
 
             AlternateView = isMobile ? "Desktop" : "Mobile";
