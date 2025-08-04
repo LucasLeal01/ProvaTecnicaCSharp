@@ -11,6 +11,9 @@
     "test": "ng test"
   },
   "private": true,
+  "engines": {
+    "node": "20.x"
+  },
   "dependencies": {
     "@angular/animations": "^16.0.0",
     "@angular/common": "^16.0.0",
