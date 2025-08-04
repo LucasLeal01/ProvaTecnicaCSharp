@@ -11,22 +11,26 @@
 }
 
 .form-control {
-  border: 1px solid var(--border-color);
+  border: 2px solid #a0aec0 !important;
   border-radius: var(--border-radius);
   padding: 0.75rem 1rem;
   transition: var(--transition);
-  box-shadow: var(--shadow-sm);
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.05);
   width: 100%;
+  height: auto;
 }
 
 .form-control:focus {
-  border-color: #4facfe;
-  box-shadow: 0 0 0 0.2rem rgba(79, 172, 254, 0.25);
+  border-color: #4facfe !important;
+  box-shadow: 0 0 0 0.2rem rgba(79, 172, 254, 0.25) !important;
 }
 
 .input-group {
   display: flex;
   position: relative;
+  width: 100%;
+  align-items: stretch;
+  height: 100%;
 }
 
 .input-group-prepend {
@@ -36,19 +40,24 @@
 .input-group-text {
   display: flex;
   align-items: center;
-  padding: 0.75rem 1rem;
+  padding: 0.75rem 0.5rem;
   font-weight: 400;
   text-align: center;
   white-space: nowrap;
   background-color: #f8f9fa;
-  border: 1px solid var(--border-color);
+  border: 2px solid #a0aec0;
   border-radius: var(--border-radius) 0 0 var(--border-radius);
   border-right: none;
+  width: auto;
+  flex-shrink: 0;
+  height: 100%;
 }
 
 .input-group .form-control {
   border-top-left-radius: 0;
   border-bottom-left-radius: 0;
+  flex: 1;
+  width: auto;
 }
 
 .btn {
@@ -98,6 +107,7 @@
 
 .invalid-feedback {
   display: block;
+  position: absolute;
   width: 100%;
   margin-top: 0.25rem;
   font-size: 0.875rem;

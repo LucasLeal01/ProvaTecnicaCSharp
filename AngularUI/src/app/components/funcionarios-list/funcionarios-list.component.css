@@ -24,6 +24,19 @@
   border-radius: var(--border-radius);
   padding: 0.5rem 1rem;
   width: 300px;
+  border: 2px solid rgba(255, 255, 255, 0.4) !important;
+}
+
+.input-group .form-control {
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+  border: 2px solid #a0aec0 !important;
+}
+
+.input-group-text {
+  border: 2px solid #a0aec0 !important;
+  border-left: none !important;
+  background-color: #f8f9fa;
 }
 
 .card-header .search-container input {
@@ -40,6 +53,11 @@
 
 .card-header .search-container input:focus {
   outline: none;
+}
+
+.card-header .search-container:focus-within {
+  border-color: rgba(255, 255, 255, 0.8) !important;
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.2);
 }
 
 .card-header .search-container i {

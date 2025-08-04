@@ -1,4 +1,4 @@
-<header>
+<header *ngIf="!isHomePage">
   <nav class="navbar navbar-modern navbar-expand-lg">
     <div class="container">
       <a class="navbar-brand navbar-brand-modern" href="#">{{ title }}</a>
@@ -7,6 +7,9 @@
       </button>
       <div class="collapse navbar-collapse" id="navbarNav">
         <ul class="navbar-nav ms-auto">
+          <li class="nav-item">
+            <a class="nav-link nav-link-modern" routerLink="/home" routerLinkActive="active">Home</a>
+          </li>
           <li class="nav-item">
             <a class="nav-link nav-link-modern" routerLink="/funcionarios" routerLinkActive="active">Funcionarios</a>
           </li>
@@ -19,15 +22,15 @@
   </nav>
 </header>
 
-<main class="main-container">
-  <div class="container py-4">
+<main [ngClass]="{'main-container': !isHomePage}">
+  <div [ngClass]="{'container py-4': !isHomePage}">
     <router-outlet></router-outlet>
   </div>
 </main>
 
-<footer class="footer-modern">
+<footer class="footer-modern" *ngIf="!isHomePage">
   <div class="container">
-    <p>&copy; 2024 Sistema de Gerenciamento.</p>
+    <p>&copy; 2025 Sistema de Gerenciamento. Todos os direitos reservados.</p>
   </div>
 </footer>
 

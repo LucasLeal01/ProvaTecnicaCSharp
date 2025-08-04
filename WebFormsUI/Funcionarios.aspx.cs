@@ -35,6 +35,8 @@ namespace WebFormsUI
                 NotificationHelper.ShowError(this, "Erro ao carregar funcionários. Tente novamente.");
             }
         }
+        
+
 
         protected void btnNovo_Click(object sender, EventArgs e)
         {

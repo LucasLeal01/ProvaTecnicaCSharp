@@ -8,7 +8,7 @@ export interface Funcionario {
 }
 
 export interface Ferias {
-  id: number;
+  id?: number; // ID é opcional ao criar novas férias
   funcionarioId: number;
   dataInicio: string;
   dataFim: string;

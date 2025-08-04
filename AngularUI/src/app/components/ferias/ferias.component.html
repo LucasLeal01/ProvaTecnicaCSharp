@@ -28,10 +28,18 @@
         <div class="card-body">
           <form [formGroup]="feriasForm" (ngSubmit)="onSubmit()">
             <div class="form-group">
-              <label for="funcionarioNome">Funcionário</label>
-              <input type="text" id="funcionarioNome" class="form-control" formControlName="funcionarioNome">
-              <div *ngIf="feriasForm.get('funcionarioNome')?.invalid && feriasForm.get('funcionarioNome')?.touched" class="invalid-feedback">
-                Nome do funcionário é obrigatório
+              <label for="funcionarioId">Funcionário</label>
+              <div class="select-container">
+                <select id="funcionarioId" class="form-control" formControlName="funcionarioId">
+                  <option value="">Selecione um funcionário</option>
+                  <option *ngFor="let funcionario of funcionarios" [value]="funcionario.id">{{ funcionario.nome }}</option>
+                </select>
+                <div class="select-icon">
+                  <i class="fas fa-chevron-down"></i>
+                </div>
+              </div>
+              <div *ngIf="feriasForm.get('funcionarioId')?.invalid && feriasForm.get('funcionarioId')?.touched" class="invalid-feedback">
+                Selecione um funcionário
               </div>
             </div>
             

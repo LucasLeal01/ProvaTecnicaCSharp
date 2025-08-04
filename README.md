@@ -176,5 +176,5 @@ ProvaTecnicaCSharp/
 
 ---
 
-**© 2024 Sistema de Gerenciamento**
+**© 2025 Sistema de Gerenciamento. Todos os direitos reservados.**
 

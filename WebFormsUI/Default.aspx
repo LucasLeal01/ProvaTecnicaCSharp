@@ -250,7 +250,7 @@
                         </div>
                         
                         <div class="footer">
-                            <p>&copy; 2024 Sistema de Gerenciamento.</p>
+                            <p>&copy; 2025 Sistema de Gerenciamento. Todos os direitos reservados.</p>
                         </div>
                     </div>
                 </div>
