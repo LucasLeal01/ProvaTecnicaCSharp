@@ -2,11 +2,13 @@ services:
   - type: web
     name: angular-ui
     env: node
-    buildCommand: cd AngularUI && chmod +x build.sh && ./build.sh
-    startCommand: cd AngularUI && npm run start:prod
+    buildCommand: npm install && cd AngularUI && npm install && npm run build
+    startCommand: cd AngularUI && node server.js
     envVars:
       - key: NODE_VERSION
         value: 18.x
+      - key: PORT
+        value: 10000
   - type: web
     name: api
     env: docker

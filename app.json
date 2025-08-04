@@ -1,0 +1,14 @@
+{
+  "name": "ProvaTecnicaCSharp",
+  "description": "Sistema de gerenciamento de funcionários e férias desenvolvido em C# com múltiplas interfaces de usuário",
+  "repository": "https://github.com/LucasLeal01/ProvaTecnicaCSharp",
+  "keywords": ["angular", "node", "express", "static"],
+  "buildpacks": [
+    {
+      "url": "heroku/nodejs"
+    },
+    {
+      "url": "https://github.com/heroku/heroku-buildpack-static.git"
+    }
+  ]
+}

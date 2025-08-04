@@ -1,0 +1,15 @@
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "AngularUI/package.json",
+      "use": "@vercel/static-build",
+      "config": {
+        "distDir": "dist/angular-ui"
+      }
+    }
+  ],
+  "routes": [
+    { "src": "/(.*)", "dest": "/AngularUI/dist/angular-ui/index.html" }
+  ]
+}

@@ -1,16 +1,10 @@
 {
-  "name": "angular-ui",
+  "name": "angular-ui-vercel",
   "version": "0.0.0",
   "scripts": {
-    "ng": "ng",
-    "start": "ng serve",
-    "start:prod": "node server.js",
-    "build": "ng build",
-    "postinstall": "npm install express && ng build",
-    "watch": "ng build --watch --configuration development",
-    "test": "ng test"
+    "build": "npm install && ng build",
+    "vercel-build": "npm install && ng build"
   },
-  "private": true,
   "dependencies": {
     "@angular/animations": "^16.0.0",
     "@angular/common": "^16.0.0",
@@ -40,4 +34,3 @@
     "typescript": "~5.0.2"
   }
 }
-

@@ -1,0 +1,1 @@
+web: cd AngularUI && npm run start:prod
